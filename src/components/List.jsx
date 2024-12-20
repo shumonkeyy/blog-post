@@ -15,8 +15,6 @@ const List = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState("");
 
-  useEffect(() => console.log(title, content), [title, content]);
-
   const getTitle = useRef();
   const getContent = useRef();
 
