@@ -113,30 +113,34 @@ const List = () => {
       <>
         <div className="container text-center my-5">
           <h1>All Posts</h1>
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {posts.map((post) => {
-                return (
-                  <Post
-                    key={post.id}
-                    id={post.id}
-                    title={post.title}
-                    content={post.content}
-                    editPost={editPost}
-                    deletePost={deletePost}
-                  />
-                );
-              })}
-            </tbody>
-          </table>
+          {!posts.length ? (
+            <h2 className="text-danger">There are no posts to show.</h2>
+          ) : (
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Content</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.map((post) => {
+                  return (
+                    <Post
+                      key={post.id}
+                      id={post.id}
+                      title={post.title}
+                      content={post.content}
+                      editPost={editPost}
+                      deletePost={deletePost}
+                    />
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
           <button className="btn btn-primary mt-2" onClick={toggleCreate}>
             + Create New Post
           </button>
