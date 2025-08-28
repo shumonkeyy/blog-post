@@ -2,21 +2,53 @@ import React, { useEffect, useState, useRef } from "react";
 import Create from "./Create";
 import Post from "./Post";
 import Edit from "./Edit";
+import axios from "axios";
+import "../index.css";
 
 const List = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [posts, setPosts] = useState([
-    { id: 1, title: "t1", content: "c1" },
-    { id: 2, title: "t2", content: "c2" },
-  ]);
+  const [posts, setPosts] = useState([]);
 
   const [isCreate, setIsCreate] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const getTitle = useRef();
   const getContent = useRef();
+  const [validateErr, setValidateErr] = useState({});
+
+  useEffect(() => {
+    fetchPost();
+  }, []);
+
+  const fetchPost = async () => {
+    try {
+      const response = await axios.get("/api/blog");
+      setPosts(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center mt-5">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="error-message">Error: {error}</div>;
+  }
 
   const saveTitle = (e) => {
     setTitle(e.target.value);
@@ -34,41 +66,95 @@ const List = () => {
     setEditId(id);
     toggleEdit();
   };
-  const savePost = (e) => {
-    e.preventDefault();
+  // const savePost = (e) => {
+  //   e.preventDefault();
 
-    const id = Date.now();
-    setPosts([...posts, { id, title, content }]);
-    getTitle.current.value = "";
-    getContent.current.value = "";
-    toggleCreate();
+  //   const id = Date.now();
+  //   setPosts([...posts, { id, title, content }]);
+  //   getTitle.current.value = "";
+  //   getContent.current.value = "";
+  //   toggleCreate();
+  // };
+  const savePost = async (event) => {
+    event.preventDefault();
+    if (title && content) {
+      // setPosts([...posts, {id: Date.now(), title, content}])
+      await axios.put(`/api/blog/${editId}`, {
+        title,
+        content,
+      });
+      fetchPost();
+
+      getTitle.current.value = "";
+      getContent.current.value = "";
+      toggleCreate();
+
+      setValidateErr([]);
+    } else {
+      let err = [];
+      if (!title) err["title"] = "This field is required!";
+      if (!content) err["content"] = "This field is required!";
+
+      setValidateErr(err);
+    }
   };
 
-  const updatePost = (e) => {
-    e.preventDefault();
+  // const updatePost = (e) => {
+  //   e.preventDefault();
 
-    const updatedPosts = posts.map((post) => {
-      if (post.id === editId) {
-        return {
-          ...post,
-          title: title || post.title,
-          content: content || post.content,
-        };
-      }
-      return post;
-    });
-    setPosts(updatedPosts);
+  //   const updatedPosts = posts.map((post) => {
+  //     if (post.id === editId) {
+  //       return {
+  //         ...post,
+  //         title: title || post.title,
+  //         content: content || post.content,
+  //       };
+  //     }
+  //     return post;
+  //   });
+  //   setPosts(updatedPosts);
 
-    toggleEdit();
+  //   toggleEdit();
+  // };
+  const updatePost = async (event) => {
+    event.preventDefault();
+
+    if (title && content) {
+      console.log("post update");
+      // const updatedPosts = posts.map(post => {
+      //  if(post._id === editId) {
+      //      return { ...post, title, content }
+      //  }
+      //  return post
+      // })
+      // setPosts(updatedPosts)
+      await axios.put(`/api/blog/${editId}`, {
+        title,
+        content,
+      });
+      fetchPost();
+
+      // getTitle.current.value = "";
+      // getContent.current.value = "";
+      setIsEdit(false);
+
+      setValidateErr([]);
+    } else {
+      // console.log("error");
+      let err = [];
+      if (!title) err["title"] = "This field is required!";
+      if (!content) err["content"] = "This field is required!";
+      console.log(err);
+
+      setValidateErr(err);
+    }
   };
 
-  const deletePost = (id) => {
+  const deletePost = async (id) => {
     if (confirm("Are you sure you want to delete this post?")) {
       // Save it!
-      const modifiedPosts = posts.filter((eachPost) => {
-        return eachPost.id !== id;
-      });
-      setPosts(modifiedPosts);
+      await axios.delete(`http://localhost:3000/blog/${id}`);
+      fetchPost();
     } else {
       // Do nothing!
       return;
