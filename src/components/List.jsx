@@ -9,6 +9,7 @@ const List = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
+  const [count, setCount] = useState(0);
 
   const [isCreate, setIsCreate] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -39,7 +40,7 @@ const List = () => {
   if (loading) {
     return (
       <div className="d-flex justify-content-center mt-5">
-        <div className="spinner-border" role="status">
+        <div className="spinner-grow" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
@@ -79,7 +80,7 @@ const List = () => {
     event.preventDefault();
     if (title && content) {
       // setPosts([...posts, {id: Date.now(), title, content}])
-      await axios.put(`/api/blog/${editId}`, {
+      await axios.post(`/api/blog/`, {
         title,
         content,
       });
@@ -88,6 +89,8 @@ const List = () => {
       getTitle.current.value = "";
       getContent.current.value = "";
       toggleCreate();
+
+      setCount(count + 1);
 
       setValidateErr([]);
     } else {
@@ -153,10 +156,11 @@ const List = () => {
   const deletePost = async (id) => {
     if (confirm("Are you sure you want to delete this post?")) {
       // Save it!
-      await axios.delete(`http://localhost:3000/blog/${id}`);
+      await axios.delete(`/api/blog/${id}`);
       fetchPost();
     } else {
       // Do nothing!
+      console.log("hello");
       return;
     }
   };
@@ -202,7 +206,16 @@ const List = () => {
           {!posts.length ? (
             <h2 className="text-danger">There are no posts to show.</h2>
           ) : (
-            <table className="table table-striped">
+            <table
+              className="table table-striped"
+              style={{ tableLayout: "fixed", width: "100%" }}
+            >
+              <colgroup>
+                <col style={{ width: "10%" }} /> {/* ID */}
+                <col style={{ width: "25%" }} /> {/* Title */}
+                <col style={{ width: "45%" }} /> {/* Content */}
+                <col style={{ width: "20%" }} /> {/* Actions */}
+              </colgroup>
               <thead>
                 <tr>
                   <th>ID</th>
@@ -212,10 +225,24 @@ const List = () => {
                 </tr>
               </thead>
               <tbody>
-                {posts.map((post) => {
+                {/* {posts.map((post) => {
                   return (
                     <Post
                       key={post.id}
+                      id={posts.length}
+                      title={post.title}
+                      content={post.content}
+                      editPost={editPost}
+                      deletePost={deletePost}
+                    />
+                  );
+                })} */}
+                {posts.map((post, index) => {
+                  // console.log(index + 1);
+                  return (
+                    <Post
+                      key={post.id}
+                      count={index + 1}
                       id={post.id}
                       title={post.title}
                       content={post.content}

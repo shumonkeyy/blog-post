@@ -1,13 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const Post = ({ id, title, content, editPost, deletePost }) => {
+const Post = ({ count, id, title, content, editPost, deletePost }) => {
+  // console.log(count);
   return (
     <>
       <tr>
-        <td>{id}</td>
-        <td>{title}</td>
-        <td>{content}</td>
+        <td>{count}</td>
+        <td className="text-justify">{title}</td>
+        <td className="text-justify">{content}</td>
         <td>
           <button className="btn btn-primary me-2" onClick={() => editPost(id)}>
             <FontAwesomeIcon icon={faPenToSquare} />

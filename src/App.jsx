@@ -13,9 +13,9 @@ function App() {
           className="btn themeButton"
         >
           {isActive ? (
-            <i class="bi bi-moon fa-2x"></i>
+            <i className="bi bi-moon fa-2x"></i>
           ) : (
-            <i class="bi bi-sun fa-2x"></i>
+            <i className="bi bi-sun fa-2x"></i>
           )}
         </button>
         <List />

@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: "https://blog-api-eight-delta.vercel.app/",
         changeOrigin: true,
         // optional: rewrite /api -> /
         rewrite: (path) => path.replace(/^\/api/, ""),
