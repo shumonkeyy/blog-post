@@ -28,7 +28,10 @@ const List = () => {
 
   const fetchPost = async () => {
     try {
-      const response = await axios.get("/api/blog");
+      // const response = await axios.get("/api/blog");
+      const response = await axios.get(
+        "https://blog-api-eight-delta.vercel.app/blog"
+      );
       setPosts(response.data);
     } catch (err) {
       setError(err.message);
@@ -80,7 +83,8 @@ const List = () => {
     event.preventDefault();
     if (title && content) {
       // setPosts([...posts, {id: Date.now(), title, content}])
-      await axios.post(`/api/blog/`, {
+      // await axios.post(`/api/blog/`, {
+      await axios.post(`https://blog-api-eight-delta.vercel.app/blog/`, {
         title,
         content,
       });
@@ -131,10 +135,14 @@ const List = () => {
       //  return post
       // })
       // setPosts(updatedPosts)
-      await axios.put(`/api/blog/${editId}`, {
-        title,
-        content,
-      });
+      // await axios.put(`/api/blog/${editId}`, {
+      await axios.put(
+        `https://blog-api-eight-delta.vercel.app/blog/${editId}`,
+        {
+          title,
+          content,
+        }
+      );
       fetchPost();
 
       // getTitle.current.value = "";
@@ -156,7 +164,8 @@ const List = () => {
   const deletePost = async (id) => {
     if (confirm("Are you sure you want to delete this post?")) {
       // Save it!
-      await axios.delete(`/api/blog/${id}`);
+      // await axios.delete(`/api/blog/${id}`);
+      await axios.delete(`https://blog-api-eight-delta.vercel.app/blog/${id}`);
       fetchPost();
     } else {
       // Do nothing!
